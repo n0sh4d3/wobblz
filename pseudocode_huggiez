@@ -1,0 +1,55 @@
+initialize empty dict: config = {}
+initialize current_section = config
+
+for each line in file:
+    line = line.trim()
+
+    if line is empty or starts with '#' or '💬':
+        skip it
+
+    if line starts with '[' and ends with ']':
+        section_name = line.strip_brackets()
+        if section_name contains '.':
+            # handle nested sections like [a.b.c]
+            parts = section_name.split('.')
+            temp = config
+            for part in parts:
+                if part not in temp:
+                    temp[part] = {}
+                temp = temp[part]
+            current_section = temp
+        else:
+            if section_name not in config:
+                config[section_name] = {}
+            current_section = config[section_name]
+
+    else if '=' in line or ':' in line or '~' in line:
+        # support multiple key-value separators
+        key, val = split_on_first(line, one_of(['=', ':', '~']))
+        key = key.strip()
+        val = val.strip()
+
+        # parse value
+        parsed_value = parse_value(val)
+        current_section[key] = parsed_value
+
+    else if inside an array block:
+        # optional: handle arrays spread across lines
+        current_section[current_key].append(parse_value(line))
+
+
+parsse_val(helper):
+    if val starts and ends with '"' or "'":
+        return val without quotes
+    if val is 'true', 'yes', 'on':
+        return True
+    if val is 'false', 'no', 'off':
+        return False
+    if val is numeric (int or float):
+        return as number
+    if val starts with '[' and ends with ']':
+        inner = val.strip_brackets()
+        return [parse_value(v.strip()) for v in inner.split(',')]
+    else:
+        return val as string
+

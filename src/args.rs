@@ -23,7 +23,6 @@ impl Arg {
         arg == self.short || arg == self.long
     }
 
-    // Helper to get the name without the dashes for use as hash keys
     pub fn name(&self) -> String {
         self.long.trim_start_matches("--").to_string()
     }
