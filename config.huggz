@@ -1,2 +1,2 @@
-fuzzword => NYA
-default_wordlist => ~/chuj.jebany
+fuzzword = NYA
+wordlist = ~/path_here

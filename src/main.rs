@@ -24,7 +24,8 @@ fn main() {
         println!("{}", wobbwz_logo);
         let huggz_file = read_lines("config.huggz");
 
-        let _dats = huggz_parser::parse(&huggz_file);
+        let data = huggz_parser::parse(&huggz_file);
+        println!("{:?}", data.values());
     } else {
         println!("i failed to wun :(")
     }

@@ -7,6 +7,7 @@ for each line in file:
     if line is empty or starts with '#' or '💬':
         skip it
 
+    -- not applicable now (don't care)
     if line starts with '[' and ends with ']':
         section_name = line.strip_brackets()
         if section_name contains '.':
@@ -22,6 +23,7 @@ for each line in file:
             if section_name not in config:
                 config[section_name] = {}
             current_section = config[section_name]
+    -- not aplicable now
 
     else if '=' in line or ':' in line or '~' in line:
         # support multiple key-value separators
