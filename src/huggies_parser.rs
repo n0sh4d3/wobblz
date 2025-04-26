@@ -18,6 +18,20 @@ impl Default for Huggies {
     }
 }
 
+impl Huggies {
+    pub fn fuzz_word(&self) -> &str {
+        &self.fuzz_word
+    }
+
+    pub fn wordlist(&self) -> &str {
+        &self.wordlist
+    }
+
+    pub fn threads(&self) -> i32 {
+        self.threads
+    }
+}
+
 #[derive(Debug)]
 pub enum ParseError {
     InvalidThreads(String),
@@ -37,6 +51,10 @@ impl Default for HuggiesParser<std::io::Stdout> {
 }
 
 impl<W: Write> HuggiesParser<W> {
+    pub fn new(writer: W) -> Self {
+        Self { writer }
+    }
+
     pub fn parse(
         &mut self,
         content: &[String],
