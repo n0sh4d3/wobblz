@@ -43,7 +43,7 @@ impl fmt::Display for Arg {
             self.long,
             self.short,
             self.desc,
-            if self.required { " [required]" } else { "" }
+            if self.required { " [wequiwed >w<]" } else { "" }
         )
     }
 }
@@ -78,7 +78,7 @@ impl ArgsParser {
 
                     if value.is_empty() && arg_def.required {
                         println!(
-                            "Error: Required argument '{}' provided with empty value",
+                            "(｡•́︿•̀｡) oopsies! wequiwed awgument '{}' pwovided with empty vawue!!",
                             arg_def.long
                         );
                     } else {
@@ -88,21 +88,24 @@ impl ArgsParser {
                 } else {
                     if arg_def.required {
                         println!(
-                            "Error: Required argument '{}' provided but no value given",
+                            "(Ｔ▽Ｔ) e-ep!! wequiwed awgument '{}' pwovided but no vawue given!!!",
                             arg_def.long
                         );
                     }
                     i += 1;
                 }
             } else {
-                println!("Warning: Unrecognized argument '{}'", current);
+                println!("( ｡ •̀ ᴖ •́ ｡) wawnin': unwecognized awgument '{}'", current);
                 i += 1;
             }
         }
 
         for arg in &self.args {
             if arg.required && !processed_arg_names.contains(&arg.name()) {
-                println!("Error: Required argument '{}' not provided", arg.long);
+                println!(
+                    "(ó﹏ò｡) nooo~ wequiwed awgument '{}' was not pwovided!!",
+                    arg.long
+                );
             }
         }
 
@@ -110,7 +113,7 @@ impl ArgsParser {
     }
 
     pub fn validate(&self, parsed_args: &HashMap<String, String>) -> bool {
-        let mut is_valid = true;
+        let mut is_valid = true; // hehe :3
 
         for arg in &self.args {
             if arg.required {

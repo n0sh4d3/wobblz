@@ -7,16 +7,8 @@ pub struct Huggies {
     threads: i32,
 }
 
-pub fn new_huggies(fuzz_word: String, wordlist: String, threads: i32) -> Huggies {
-    Huggies {
-        fuzz_word,
-        wordlist,
-        threads,
-    }
-}
-
-pub fn parse(content: &[String]) -> Huggies {
-    //em varwiables!!
+pub fn parse(content: &[String], args: &HashMap<String, String>) -> Huggies {
+    // em varwiables!! (｡•̀ᴗ-)✧
     let fuzzword = "fuzzword".to_string();
     let wordlist = "wordlist".to_string();
     let threads = "threads".to_string();
@@ -49,7 +41,10 @@ pub fn parse(content: &[String]) -> Huggies {
 
         if key == fuzzword {
             if config.contains_key(key) {
-                println!("Error: '{}' declared more than once", key);
+                println!(
+                    "(｡•́︿•̀｡) oopsie woopsie!! '{}' was decwawed mowe than once!!",
+                    key
+                );
             } else {
                 config.insert(key.to_string(), value.to_string());
                 huggies.fuzz_word = value.to_string();
@@ -57,7 +52,7 @@ pub fn parse(content: &[String]) -> Huggies {
         }
         if key == wordlist {
             if config.contains_key(key) {
-                println!("Error: '{}' declared more than once", key);
+                println!("(ó﹏ò｡) oh nuu!! '{}' is awweady thewe!!", key);
             } else {
                 config.insert(key.to_string(), value.to_string());
                 huggies.wordlist = value.to_string()
@@ -65,23 +60,29 @@ pub fn parse(content: &[String]) -> Huggies {
         }
         if key == threads {
             if config.contains_key(key) {
-                print!("Error: '{}' declared more than once", key)
+                println!("(ノ_<。) uh-oh!! '{}' is duplicated!!", key);
             } else {
                 config.insert(key.to_string(), value.to_string());
-                huggies.threads = value.to_string().parse().expect("Invalid type");
+                huggies.threads = value
+                    .to_string()
+                    .parse()
+                    .expect("✧･ﾟ: *✧･ﾟ:* invawid thweads count >w< *:･ﾟ✧*:･ﾟ✧");
             }
         }
     }
 
     if !config.contains_key(&fuzzword.to_string()) {
+        println!("(⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄) no fuzzwowd~ using defauwt 'HUGGIE'~");
         huggies.fuzz_word = "HUGGIE".to_string()
     }
 
     if !config.contains_key(&wordlist.to_string()) {
-        huggies.wordlist = "".to_string()
+        println!("(｡>﹏<｡) no wowdlist p-pwovided~ using awgs one~!");
+        huggies.wordlist = args.get("wordlist").unwrap().to_owned();
     }
 
     if !config.contains_key(&threads) {
+        println!("(✿^‿^) no thweads specified, using 10 nya~");
         huggies.threads = 10
     }
 

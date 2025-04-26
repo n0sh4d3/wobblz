@@ -15,19 +15,22 @@ fn main() {
 
     let mut parser = args::ArgsParser::new();
     parser.add_argument(args::Arg::new("target", "person to attack!", true));
+    parser.add_argument(args::Arg::new("wordlist", "wowds to use :3", true));
 
     let parsed_args = parser.parse();
 
     if parser.validate(&parsed_args) {
         let _target = parsed_args.get("target").unwrap().to_owned();
+        let _wordlist = parsed_args.get("wordlist").unwrap().to_owned();
 
+        println!("(ﾉ>ω<)ﾉ :｡･:*:･ﾟ’★,｡･:*:･ﾟ’☆ hewe's u youw wobbwz wogo~");
         println!("{}", wobbwz_logo);
         let huggz_file = read_lines("config.huggz");
 
-        let data = huggies_parser::parse(&huggz_file);
-        println!("{:?}", data);
+        let data = huggies_parser::parse(&huggz_file, &parsed_args);
+        println!("(⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄) hewe's youw dataa~ {:?}", data);
     } else {
-        println!("i failed to wun :(")
+        println!("(｡•́︿•̀｡) i faiwed to wun :(")
     }
 }
 
