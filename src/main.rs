@@ -1,5 +1,5 @@
 mod args;
-mod huggz_parser;
+mod huggies_parser;
 use std::fs::read_to_string;
 
 fn main() {
@@ -24,8 +24,8 @@ fn main() {
         println!("{}", wobbwz_logo);
         let huggz_file = read_lines("config.huggz");
 
-        let data = huggz_parser::parse(&huggz_file);
-        println!("{:?}", data.values());
+        let data = huggies_parser::parse(&huggz_file);
+        println!("{:?}", data);
     } else {
         println!("i failed to wun :(")
     }
