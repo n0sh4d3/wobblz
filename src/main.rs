@@ -5,6 +5,14 @@ use std::error::Error;
 use std::fs::read_to_string;
 use std::io::{self, Write};
 
+// TODO:
+//      MULTIRHEADING!!!
+//      make this parser work frfr!!!
+//      don't put cap on amount of words possible to use (all of them should be)
+//                                                  (BASE_WORD + FEATURE) (just all caps ones
+//                                                  should be valid tbh)
+//      prettify output
+
 const WOBBWZ_LOGO: &str = "
 ˚∧＿∧  　+        —̳͟͞͞💗
 (  •‿• )つ  —̳͟͞͞ 💗         —̳͟͞͞💗  < hehe url go boom
