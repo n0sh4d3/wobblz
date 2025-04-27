@@ -6,7 +6,7 @@
 ---
   
 [![made by purrbytes.sh](https://img.shields.io/badge/made%20with-snacks%20%26%20spite-ff69b4?style=for-the-badge)](https://purrbytes.sh)  
-[![powered by rust](https://img.shields.io/badge/powered%20by-rust%20and%20chaos-faa6ff?style=for-the-badge)](https://www.rust-lang.org/)  
+[![powered by go](https://img.shields.io/badge/powered%20by-go%20and%20chaos-faa6ff?style=for-the-badge)](https://go.dev)  
 [![license uwu](https://img.shields.io/badge/license-MIT-ff69b4?style=for-the-badge)](#)
 
 ---

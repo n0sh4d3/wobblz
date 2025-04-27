@@ -1,8 +1,0 @@
-// default fuzzword, you can set urs :3
-fuzzword = NYA
-
-// default wordlist
-wordlist = ~/path_here
-
-// multitaskwing!!!
-threads = 10
