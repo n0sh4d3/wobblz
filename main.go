@@ -1,66 +1,93 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
-	"strings"
-
 	mini "github.com/mvstermind/mini-cli"
+	"net/http"
+	"os"
+	"strings"
+	"time"
 )
 
 func main() {
-
-	target := mini.NewArg("t", "target", "pewson to attack", true)
-
-	cmds := mini.AddArguments(target)
-
+	t := "target"
+	w := "wordlist"
+	target := mini.NewArg(firstLett(t), t, "target URL to fuzz", true)
+	wordlist := mini.NewArg(firstLett(w), w, "wordlist file path", true)
+	cmds := mini.AddArguments(target, wordlist)
 	args := cmds.Execute()
 
-	targteVal := args["-t"]
+	targetVal := args["-t"]
+	wlistVal := args["-w"]
 
-	if err := parseTarget(targteVal, "WUW"); err != nil {
-		fmt.Println("ewwow occured: ", err)
+	fileContent, err := readFile(wlistVal)
+	if err != nil {
+		fmt.Printf("Error reading wordlist: %v\n", err)
+		os.Exit(1)
+	}
+
+	if err := fuzzyReplace(targetVal, "FUZZ", fileContent); err != nil {
+		fmt.Printf("Error occurred: %v\n", err)
+		os.Exit(1)
 	}
 }
 
-func parseTarget(target string, fuzzWord string) error {
-	var (
-		foundFirstChar bool
-		targetSliced   []string
-	)
+func fuzzyReplace(target string, fuzzWord string, fileContent []string) error {
+	if !strings.Contains(target, fuzzWord) {
+		return fmt.Errorf("fuzz keyword '%s' not found in target URL", fuzzWord)
+	}
 
-	for i, c := range target {
-		// fuck em runezz
-		char := string(c)
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
 
-		if char == string(fuzzWord[0]) && !foundFirstChar {
-			foundFirstChar = true
-			targetSliced = append(targetSliced, target[:i])
-			targetSliced = append(targetSliced, target[i+len(fuzzWord):])
-
+	for _, word := range fileContent {
+		if word == "" {
+			continue
 		}
 
-	}
-	fmt.Println(targetSliced)
+		url := strings.ReplaceAll(target, fuzzWord, word)
 
-	word := insertWord(targetSliced, "rizzla")
-	println(word)
+		resp, err := client.Get(url)
+		if err != nil {
+			fmt.Printf("Error requesting %s: %v\n", url, err)
+			continue
+		}
+
+		fmt.Printf("%s -> %d\n", url, resp.StatusCode)
+		resp.Body.Close()
+	}
 
 	return nil
-
 }
 
-func enumerate(sliced []string, wordlist []string) (int, error) {
-	return 0, nil
-
+func firstLett(word string) string {
+	if len(word) == 0 {
+		return ""
+	}
+	return string(word[0])
 }
 
-func insertWord(sliced []string, word string) string {
-	var fuzzedWord string
+func readFile(filename string) ([]string, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
 
-	for i := range sliced {
-		fuzzedWord += sliced[i] + word
-
+	var words []string
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		word := strings.TrimSpace(scanner.Text())
+		if word != "" && !strings.HasPrefix(word, "#") { // Skip comments and empty lines
+			words = append(words, word)
+		}
 	}
 
-	return strings.Trim(fuzzedWord, word)
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return words, nil
 }
