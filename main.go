@@ -75,9 +75,7 @@ func printBanner() {
 func LoadConfig(path string) (Config, error) {
 	var config Config
 
-	// Check if file exists
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		// Return default config if file doesn't exist
 		return Config{
 			Fuzzword:  "FUZZ",
 			Threads:   10,
@@ -87,18 +85,15 @@ func LoadConfig(path string) (Config, error) {
 		}, nil
 	}
 
-	// Read the file
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return config, err
 	}
 
-	// Parse the file (simple version for now)
 	lines := strings.Split(string(data), "\n")
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
 
-		// Skip comments and empty lines
 		if strings.HasPrefix(line, "//") || line == "" {
 			continue
 		}
@@ -133,17 +128,14 @@ func LoadConfig(path string) (Config, error) {
 }
 
 func parseInt(s string) (int, error) {
-	// Remove any non-digit characters
 	re := regexp.MustCompile(`\D`)
 	clean := re.ReplaceAllString(s, "")
 
-	// Convert to int
 	var value int
 	_, err := fmt.Sscanf(clean, "%d", &value)
 	return value, err
 }
 
-// Read wordlist file with kawaii error handling
 func readWordlist(filename string) ([]string, error) {
 	file, err := os.Open(filename)
 	if err != nil {
@@ -167,9 +159,7 @@ func readWordlist(filename string) ([]string, error) {
 	return words, nil
 }
 
-// Main function
 func main() {
-	// Load config.huggies
 	configFile := "config.huggies"
 	config, err := LoadConfig(configFile)
 	if err != nil {
@@ -177,7 +167,6 @@ func main() {
 			ColorPink, EmojiSad, err, ColorReset)
 	}
 
-	// Define command line flags
 	targetPtr := flag.String("t", "", "target URL with fuzzwordz (required)")
 	wordlist1Ptr := flag.String("w1", "", "primary wordlist for first fuzzword")
 	wordlist2Ptr := flag.String("w2", "", "wordlist for second fuzzword")
@@ -188,7 +177,6 @@ func main() {
 	verbosePtr := flag.Bool("nya", false, "extra meowy output")
 	spicyPtr := flag.String("spicy", "200,201,204,301,302,307", "status codes that are spicy")
 
-	// Custom usage message
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "%s%s wobblz - smol babie fuzzer %s%s\n\n",
 			ColorPink, EmojiSparkles, EmojiHeartSparkles, ColorReset)
@@ -200,13 +188,10 @@ func main() {
 			os.Args[0])
 	}
 
-	// Parse flags
 	flag.Parse()
 
-	// Print kawaii banner
 	printBanner()
 
-	// Validate required flags
 	if *targetPtr == "" {
 		fmt.Printf("%s%s pwease tell me where to wobble with -t flag%s\n",
 			ColorPink, EmojiSad, ColorReset)
@@ -214,7 +199,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Identify all fuzzwords in target
 	fuzzPattern := regexp.MustCompile(`FUZZ[A-Z]*`)
 	fuzzwords := fuzzPattern.FindAllString(*targetPtr, -1)
 
@@ -224,7 +208,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Make sure wordlists are provided for each fuzzword
 	wordlistPtrs := []*string{wordlist1Ptr, wordlist2Ptr, wordlist3Ptr}
 
 	if *wordlist1Ptr == "" && len(fuzzwords) > 0 {
@@ -234,7 +217,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Read wordlists
 	wordlists := make([][]string, len(wordlistPtrs))
 
 	for i, wlPtr := range wordlistPtrs {
@@ -255,7 +237,6 @@ func main() {
 		}
 	}
 
-	// Parse spicy status codes
 	spicyCodes := make(map[int]bool)
 	for _, codeStr := range strings.Split(*spicyPtr, ",") {
 		var code int
@@ -264,7 +245,6 @@ func main() {
 		}
 	}
 
-	// Show wobble config
 	fmt.Printf("%s%s wobblz will try these comboz:%s\n",
 		ColorCyan, EmojiBlush, ColorReset)
 
@@ -282,16 +262,13 @@ func main() {
 		ColorLavender, EmojiSparkles,
 		ColorYellow, totalCombos, ColorReset)
 
-	// Start the fuzzing
 	fmt.Printf("%s%s wobblz iz wobbling... pls wait...%s\n",
 		ColorPink, EmojiSad, ColorReset)
 
-	// If we're in dry run mode, just print a few example URLs
 	if *dryRunPtr {
 		fmt.Printf("%s%s just pretending mode activated!%s\n",
 			ColorYellow, EmojiPaw, ColorReset)
 
-		// Generate a few random combinations
 		rand.Seed(time.Now().UnixNano())
 		for i := 0; i < 5; i++ {
 			url := *targetPtr
@@ -311,11 +288,9 @@ func main() {
 		os.Exit(0)
 	}
 
-	// Start fuzzing with multiple wordlists
 	results := make(chan Result)
 	var wg sync.WaitGroup
 
-	// Result processing goroutine
 	go func() {
 		spicyCount := 0
 		totalCount := 0
@@ -323,7 +298,6 @@ func main() {
 		for result := range results {
 			totalCount++
 
-			// Check if result is "spicy"
 			isSpicy := spicyCodes[result.StatusCode]
 
 			if isSpicy {
@@ -339,7 +313,6 @@ func main() {
 					ColorReset)
 			}
 
-			// Print progress occasionally
 			if totalCount%100 == 0 || totalCount == totalCombos {
 				fmt.Printf("%s%s wobbled %d/%d comboz... found %d spicy bitz so far!%s\n",
 					ColorCyan, EmojiPaw,
@@ -348,13 +321,11 @@ func main() {
 			}
 		}
 
-		// Final summary
 		fmt.Printf("\n%s%s all done! wobbled %d comboz, found %d spicy bitz! %s%s\n",
 			ColorPink, EmojiSparkles,
 			totalCount, spicyCount,
 			EmojiHeartSparkles, ColorReset)
 
-		// ASCII celebration if found something spicy
 		if spicyCount > 0 {
 			cookieArt := `
    🍪 < cookie for being a good wobblz!
